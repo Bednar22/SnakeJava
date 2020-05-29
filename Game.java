@@ -4,8 +4,8 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferStrategy;
-import java.awt.image.BufferedImage;
 
 import javax.swing.JFrame;
 
@@ -21,7 +21,19 @@ public class Game extends Canvas implements Runnable {
 	
 	//private BufferedImage image = new BufferedImage(WIDTH,HEIGHT,BufferedImage.TYPE_INT_RGB);
 	
-	private Snake snake = new Snake(100,100);
+	private InGameInterface ingameInterface;
+	private Snake snake;
+	private Food food;
+	
+	public void init() {
+		requestFocus();
+		addKeyListener(new KeyInput(this));
+		
+		ingameInterface = new InGameInterface();
+		snake = new Snake();
+		food = new Food();
+	}
+	
 	
 	private synchronized void start() {
 		if(running) {
@@ -48,23 +60,28 @@ public class Game extends Canvas implements Runnable {
 	
 	@Override
 	public void run() {
+		
+		init();
 		long lastTime = System.nanoTime();
-		final double ticksAmmount = 60.0;
-		double ns = 1000000000 / ticksAmmount;
+		final double ticksAmmount = 30.0;
+		double ns = 2000000000 / ticksAmmount;
 		double delta = 0;
 		int updates = 0;
 		int frames = 0;
 		long timer = System.currentTimeMillis();
+		
 		while(running) { //main game loop
 		
 			long now = System.nanoTime();
 			delta += (now - lastTime) / ns;
 			lastTime = now;
+			
 			if(delta>=1) {
 				tick();
 				updates++;
 				delta --;
 			}
+			
 			render();
 			frames++;
 			
@@ -80,7 +97,11 @@ public class Game extends Canvas implements Runnable {
 	}
 	
 	private void tick() {
+		
 		snake.tick();
+		isAte();
+		food.tick();
+		ingameInterface.tick();
 	}
 	
 	private void render() {
@@ -98,11 +119,37 @@ public class Game extends Canvas implements Runnable {
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, getWidth(), getHeight());
 		
-		
+		ingameInterface.render(g);
 		snake.render(g);
+		food.render(g);
 		//////////////////////////////////////////////////////////////////////
 		g.dispose();
 		bs.show();
+		
+	}
+	
+	public void isAte() {
+		if((snake.getHeadX()==food.getFoodX()) && (snake.getHeadY()==food.getFoodY())){
+			ingameInterface.setScore();
+			food.generateRandomFood();
+			snake.increaseLength();
+		}
+	}
+	
+	public void keyPressed(KeyEvent e) {
+		int key = e.getKeyCode();
+		if(key==KeyEvent.VK_RIGHT) {
+			snake.moveRight2();
+		} else if(key==KeyEvent.VK_LEFT) {
+			snake.moveLeft2();
+		} else if(key==KeyEvent.VK_UP) {
+			snake.moveUp2();
+		} else if(key==KeyEvent.VK_DOWN) {
+			snake.moveDown2();
+		}
+	}
+	
+	public void keyReleased(KeyEvent e) {
 		
 	}
 	

@@ -6,9 +6,10 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 import javax.swing.JFrame;
-
 public class Game extends Canvas implements Runnable {
 
 	public static final int WIDTH = 600;
@@ -27,16 +28,24 @@ public class Game extends Canvas implements Runnable {
 	
 	public static STATE state = STATE.MENU;
 	
-	//private BufferedImage image = new BufferedImage(WIDTH,HEIGHT,BufferedImage.TYPE_INT_RGB);
+	private BufferedImage image = new BufferedImage(100,100,BufferedImage.TYPE_INT_RGB);
 	
 	private InGameInterface ingameInterface;
 	private Snake snake;
 	private Food food;
 	private MainMenu mainMenu;
 	
+	private BufferedImage snakeMenu = null;
+	
 	public void init() {
-		requestFocus();
 		
+		BufferedImageLoader loader = new BufferedImageLoader();
+		try {
+			snakeMenu = loader.loadImage("/snakePrzerobka.png");
+		} catch(IOException e) {
+			
+		}
+		requestFocus();
 		
 		this.addKeyListener(new KeyInput(this));
 		this.addMouseListener(new MouseInput());
@@ -131,6 +140,7 @@ public class Game extends Canvas implements Runnable {
 		Graphics g = bs.getDrawGraphics();
 		//////////////////////////////////////////////////////////////////
 		
+		g.drawImage(mainMenu.img, 100, 100,null);
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, getWidth(), getHeight());
 		
@@ -141,7 +151,6 @@ public class Game extends Canvas implements Runnable {
 		} else if(state==STATE.MENU) {
 			mainMenu.render(g);
 		}
-		
 		//////////////////////////////////////////////////////////////////////
 		g.dispose();
 		bs.show();

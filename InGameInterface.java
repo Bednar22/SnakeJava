@@ -11,7 +11,7 @@ import java.io.IOException;
 public class InGameInterface {
 
 	private int score = 0;
-	Font pixelled;
+	public Font pixelled;
 	public InGameInterface() {
 		
 		try{
@@ -36,7 +36,6 @@ public class InGameInterface {
 		
 		
 		g.setColor(Color.white);
-		g.setFont(pixelled.deriveFont(10f));
 		g.setFont(pixelled.deriveFont(10f));
 		g.drawString("Score:" + this.score, 25 , 35);
 		}

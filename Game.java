@@ -18,20 +18,33 @@ public class Game extends Canvas implements Runnable {
 	private boolean running = false;
 	private Thread thread;
 	
+	public static enum STATE{
+		MENU,
+		GAMEPLAY,
+		SCOREBOARD,
+		OPTIONS,
+	};
+	
+	public static STATE state = STATE.MENU;
 	
 	//private BufferedImage image = new BufferedImage(WIDTH,HEIGHT,BufferedImage.TYPE_INT_RGB);
 	
 	private InGameInterface ingameInterface;
 	private Snake snake;
 	private Food food;
+	private MainMenu mainMenu;
 	
 	public void init() {
 		requestFocus();
-		addKeyListener(new KeyInput(this));
+		
+		
+		this.addKeyListener(new KeyInput(this));
+		this.addMouseListener(new MouseInput());
 		
 		ingameInterface = new InGameInterface();
 		snake = new Snake();
 		food = new Food();
+		mainMenu = new MainMenu();
 	}
 	
 	
@@ -97,11 +110,13 @@ public class Game extends Canvas implements Runnable {
 	}
 	
 	private void tick() {
-		
-		snake.tick();
-		isAte();
-		food.tick();
-		ingameInterface.tick();
+	
+		if(state==STATE.GAMEPLAY) {
+			snake.tick();
+			isAte();
+			food.tick();
+			ingameInterface.tick();
+		}
 	}
 	
 	private void render() {
@@ -119,9 +134,14 @@ public class Game extends Canvas implements Runnable {
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, getWidth(), getHeight());
 		
-		ingameInterface.render(g);
-		snake.render(g);
-		food.render(g);
+		if(state == STATE.GAMEPLAY) {
+			ingameInterface.render(g);
+			snake.render(g);
+			food.render(g);
+		} else if(state==STATE.MENU) {
+			mainMenu.render(g);
+		}
+		
 		//////////////////////////////////////////////////////////////////////
 		g.dispose();
 		bs.show();
@@ -138,14 +158,17 @@ public class Game extends Canvas implements Runnable {
 	
 	public void keyPressed(KeyEvent e) {
 		int key = e.getKeyCode();
-		if(key==KeyEvent.VK_RIGHT) {
-			snake.moveRight2();
-		} else if(key==KeyEvent.VK_LEFT) {
-			snake.moveLeft2();
-		} else if(key==KeyEvent.VK_UP) {
-			snake.moveUp2();
-		} else if(key==KeyEvent.VK_DOWN) {
-			snake.moveDown2();
+		
+		if(state==STATE.GAMEPLAY) {
+			if(key==KeyEvent.VK_RIGHT) {
+				snake.moveRight2();
+			} else if(key==KeyEvent.VK_LEFT) {
+				snake.moveLeft2();
+			} else if(key==KeyEvent.VK_UP) {
+				snake.moveUp2();
+			} else if(key==KeyEvent.VK_DOWN) {
+				snake.moveDown2();
+			}
 		}
 	}
 	

@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.util.Random;
 
+import snakev2package.Game.STATE;
+
 public class Snake {
 	
 	private int[] snakeX = new int[100];
@@ -13,10 +15,11 @@ public class Snake {
 	private int snakeLength = 3;
 	
 	
-	private boolean left;
-	private boolean right;
-	private boolean up;
-	private boolean down;
+	private boolean left=false;
+	private boolean right=false;
+	private boolean up=false;
+	private boolean down=false;
+	private boolean dead=false;
 	
 	private Random random = new Random();
 	
@@ -93,7 +96,10 @@ public class Snake {
 					}
 				
 				}
+		} else if(boundColision() || colisionWithSelf()){
+			Game.state = STATE.GAMEOVER;
 		}
+		
 	}
 	
 	public void render(Graphics g) {
@@ -130,6 +136,12 @@ public class Snake {
 		return snakeY[0];
 	}
 	
+	public void isDead() {
+		if(dead == true) {
+			Game.state = STATE.GAMEOVER;
+		}
+	}
+	
 	
 	public void setRandomStart() {
 		snakeX[0] = (random.nextInt(58)+1) * snakeSize; 
@@ -138,6 +150,7 @@ public class Snake {
 		snakeY[1] = snakeY[0];
 		snakeX[2] = snakeX[1] - snakeSize;
 		snakeY[2] = snakeY[0];
+		snakeLength = 3;
 	}
 	
 	public boolean boundColision() {

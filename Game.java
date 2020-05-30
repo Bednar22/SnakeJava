@@ -6,10 +6,9 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferStrategy;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 
 import javax.swing.JFrame;
+
 public class Game extends Canvas implements Runnable {
 
 	public static final int WIDTH = 600;
@@ -22,38 +21,35 @@ public class Game extends Canvas implements Runnable {
 	public static enum STATE{
 		MENU,
 		GAMEPLAY,
+		GAMEOVER,
 		SCOREBOARD,
 		OPTIONS,
 	};
-	
 	public static STATE state = STATE.MENU;
 	
-	private BufferedImage image = new BufferedImage(100,100,BufferedImage.TYPE_INT_RGB);
+	private int updates = 0;
+	private int snakeSpeed = 2; 		//bigger number slower snake
 	
 	private InGameInterface ingameInterface;
 	private Snake snake;
 	private Food food;
 	private MainMenu mainMenu;
-	
-	private BufferedImage snakeMenu = null;
-	
+	private AfterGameMenu afterGameMenu; 
+	public static int score;
 	public void init() {
 		
-		BufferedImageLoader loader = new BufferedImageLoader();
-		try {
-			snakeMenu = loader.loadImage("/snakePrzerobka.png");
-		} catch(IOException e) {
-			
-		}
+		
 		requestFocus();
 		
 		this.addKeyListener(new KeyInput(this));
 		this.addMouseListener(new MouseInput());
+		this.addMouseMotionListener(new MouseMovement());
 		
 		ingameInterface = new InGameInterface();
 		snake = new Snake();
 		food = new Food();
 		mainMenu = new MainMenu();
+		afterGameMenu = new AfterGameMenu();
 	}
 	
 	
@@ -85,10 +81,9 @@ public class Game extends Canvas implements Runnable {
 		
 		init();
 		long lastTime = System.nanoTime();
-		final double ticksAmmount = 30.0;
-		double ns = 2000000000 / ticksAmmount;
+		final double ticksAmmount = 60.0;
+		double ns = 1000000000 / ticksAmmount;
 		double delta = 0;
-		int updates = 0;
 		int frames = 0;
 		long timer = System.currentTimeMillis();
 		
@@ -121,10 +116,19 @@ public class Game extends Canvas implements Runnable {
 	private void tick() {
 	
 		if(state==STATE.GAMEPLAY) {
+			
+			if(updates%snakeSpeed==0) {
 			snake.tick();
-			isAte();
+			}
+			this.isAte();
 			food.tick();
 			ingameInterface.tick();
+			afterGameMenu.tick();
+		}
+		if(state==STATE.GAMEOVER) {
+			snake.setRandomStart();
+			food.generateRandomFood();
+			ingameInterface.resetScore();
 		}
 	}
 	
@@ -140,7 +144,6 @@ public class Game extends Canvas implements Runnable {
 		Graphics g = bs.getDrawGraphics();
 		//////////////////////////////////////////////////////////////////
 		
-		g.drawImage(mainMenu.img, 100, 100,null);
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, getWidth(), getHeight());
 		
@@ -150,6 +153,8 @@ public class Game extends Canvas implements Runnable {
 			food.render(g);
 		} else if(state==STATE.MENU) {
 			mainMenu.render(g);
+		} else if(state== STATE.GAMEOVER) {
+			afterGameMenu.render(g);
 		}
 		//////////////////////////////////////////////////////////////////////
 		g.dispose();

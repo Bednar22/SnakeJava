@@ -1,11 +1,13 @@
  package snakev2package;
 
-import java.awt.Rectangle;
+import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 public class MouseInput implements MouseListener {
 
+	private Color defaultColor = Color.white;
+	private Color diffChoice = Color.red;
 	
 	
 	@Override
@@ -51,7 +53,45 @@ public class MouseInput implements MouseListener {
 				}
 			}
 		}
-	
+		
+		//g.drawRect(Game.WIDTH/2 - 150, 425, 300, 50);
+		if(Game.state == Game.state.SCOREBOARD) {
+			if((mx>= Game.WIDTH/2-150) && (mx<= Game.WIDTH/2+150)) {
+				if((my >= 425)&&(my <= 475)) {
+					Game.state = Game.STATE.MENU;
+				}
+			}
+		}
+				
+		if(Game.state == Game.state.OPTIONS) {
+			if((mx>= Game.WIDTH/2-150) && (mx<= Game.WIDTH/2+150)) {
+				if((my >= 425)&&(my <= 475)) {
+					Game.state = Game.STATE.MENU;
+				}
+			}
+			
+			if((my >= 200)&&(my <= 230)) {
+				if((mx>= Game.WIDTH/2-185) && (mx<= Game.WIDTH/2 - 110)) {
+					//snake speed ez
+					Game.snakeSpeed = 4;
+					Options.colorEasy = diffChoice;
+					Options.colorMedium = defaultColor;
+					Options.colorHard = defaultColor;
+				} else if((mx>= Game.WIDTH/2-65) && (mx<= Game.WIDTH/2 +45)) {
+					//snake speed medium
+					Game.snakeSpeed = 3;
+					Options.colorEasy = defaultColor;
+					Options.colorHard = defaultColor;
+					Options.colorMedium = diffChoice;
+				} else if((mx>= Game.WIDTH/2+95) && (mx<= Game.WIDTH/2+175)) {
+					//snake speed hard
+					Game.snakeSpeed = 2;
+					Options.colorEasy = defaultColor;
+					Options.colorMedium = defaultColor;
+					Options.colorHard = diffChoice;
+				}  
+			}
+		}
 	}
 
 	@Override

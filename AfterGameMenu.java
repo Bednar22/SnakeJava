@@ -8,6 +8,8 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
+import javax.swing.JOptionPane;
+
 public class AfterGameMenu {
 
 	public Rectangle playAgainButton = new Rectangle(Game.WIDTH / 2 - 125, 350 , 250 , 50);
@@ -19,6 +21,7 @@ public class AfterGameMenu {
 	public static Color playagainColor = Color.white;
 	public static Color menuColor = Color.white;
 	
+	
 	public AfterGameMenu() {
 		
 		try {
@@ -27,7 +30,7 @@ public class AfterGameMenu {
 	}
 	
 	public void tick() {
-	 
+		
 	}
 	
 	
@@ -40,6 +43,7 @@ public class AfterGameMenu {
 		
 		g.setFont(font.deriveFont(28f));
 		
+		
 		g.setColor(Color.white);
 		g.drawString("Score: " + Game.score, 225, 250);
 		
@@ -51,5 +55,5 @@ public class AfterGameMenu {
 		g2d.draw(backtoMenuButton);
 		g.drawString("Menu", 250 , 485);
 	}
-	
 }
+	

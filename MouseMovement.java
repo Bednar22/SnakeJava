@@ -7,8 +7,8 @@ import java.awt.event.MouseMotionListener;
 public class MouseMovement implements MouseMotionListener {
 
 	private Color defaultColor = Color.white;
-	private Color onHover = Color.red;
-	private Color onHoverMainMenu = Color.blue;
+	private Color onHover = new Color(255, 55, 55);
+	private Color onHoverMainMenu = new Color(51, 153, 255);
 	private Color lastColor = null;
 	private boolean colored = false;
 	
@@ -71,6 +71,34 @@ public class MouseMovement implements MouseMotionListener {
 			}
 		}
 
+		//g.drawRect(Game.WIDTH/2 - 150, 425, 300, 50);
+		
+		if(Game.state==Game.STATE.SCOREBOARD) {
+			if((mx>= Game.WIDTH/2 - 150) && (mx<= Game.WIDTH/2 + 150)) {
+				if((my >= 425)&&(my <= 475)) {
+					ScoreboardManager.backMenu = onHoverMainMenu;
+					colored = true;
+				} else if(colored == true) {
+					ScoreboardManager.backMenu = defaultColor;
+				}
+			}else if(colored== true) {
+				ScoreboardManager.backMenu = defaultColor;
+			}
+		}
+		
+		if(Game.state==Game.STATE.OPTIONS) {
+			if((mx>= Game.WIDTH/2 - 150) && (mx<= Game.WIDTH/2 + 150)) {
+				if((my >= 425)&&(my <= 475)) {
+					Options.backMenu = onHoverMainMenu;
+					colored = true;
+				} else if(colored == true) {
+					Options.backMenu = defaultColor;
+				}
+			}else if(colored== true) {
+				Options.backMenu = defaultColor;
+			}
+		}
+		
 		
 	}
 

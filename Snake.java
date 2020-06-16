@@ -11,7 +11,7 @@ public class Snake {
 	private int[] snakeX = new int[100];
 	private int[] snakeY = new int[100];
 	
-	private int snakeSize = 10;
+	public static int snakeSize = 10;
 	private int snakeLength = 3;
 	
 	
@@ -31,7 +31,7 @@ public class Snake {
 		
 		
 		// MOVING RIGHT
-		if(!boundColision() && !colisionWithSelf() ) {		
+		if(!boundColision() && !colisionWithSelf() && !obstacleColision() ) {		
 		
 		if(right) {
 					for(int i = snakeLength-1; i>=0; i-- ) {
@@ -96,7 +96,7 @@ public class Snake {
 					}
 				
 				}
-		} else if(boundColision() || colisionWithSelf()){
+		} else if(boundColision() || colisionWithSelf() || obstacleColision()){
 			Game.state = STATE.GAMEOVER;
 		}
 		
@@ -144,13 +144,20 @@ public class Snake {
 	
 	
 	public void setRandomStart() {
-		snakeX[0] = (random.nextInt(58)+1) * snakeSize; 
-		snakeY[0] = (random.nextInt(49)+10) * snakeSize;
-		snakeX[1] = snakeX[0] - snakeSize;
-		snakeY[1] = snakeY[0];
-		snakeX[2] = snakeX[1] - snakeSize;
-		snakeY[2] = snakeY[0];
-		snakeLength = 3;
+		
+		boolean badStart = true;
+		while(badStart == true) {
+			snakeX[0] = (random.nextInt(55)+3) * snakeSize; 
+			snakeY[0] = (random.nextInt(49)+10) * snakeSize;
+			snakeX[1] = snakeX[0] - snakeSize;
+			snakeY[1] = snakeY[0];
+			snakeX[2] = snakeX[1] - snakeSize;
+			snakeY[2] = snakeY[0];
+			snakeLength = 3;
+			badStart = spawnColision();
+			
+		}
+		
 	}
 	
 	public boolean boundColision() {
@@ -241,6 +248,57 @@ public class Snake {
 		}
 		left = false;
 		right = false;
+	}
+	
+	public boolean obstacleColision() {
+		
+		for(Obstacle obstacle : ObstacleHandler.obstacles) {
+			
+			if(obstacle.getOrientation() == 0) {
+				if((snakeX[0] >= obstacle.getStartX() && snakeX[0] < obstacle.getStartX() + obstacle.getLength())
+					&& (snakeY[0] == obstacle.getStartY())) {
+					return true;
+				}
+			}
+			
+			if(obstacle.getOrientation() == 1) {
+				if((snakeY[0] >= obstacle.getStartY() && snakeY[0] < obstacle.getStartY() + obstacle.getLength())
+					&& (snakeX[0] == obstacle.getStartX())) {
+						return true;
+				}
+				
+			}
+			
+		}
+			
+		return false;
+	}
+	
+public boolean spawnColision() {
+		
+	
+	for(int i = 0; i<3; i++) {
+		
+		for(Obstacle obstacle : ObstacleHandler.obstacles) {
+			
+			if(obstacle.getOrientation() == 0) {
+				if((snakeX[i] >= obstacle.getStartX() && snakeX[i] < obstacle.getStartX() + obstacle.getLength())
+					&& (snakeY[i] == obstacle.getStartY())) {
+					return true;
+				}
+			}
+			
+			if(obstacle.getOrientation() == 1) {
+				if((snakeY[i] >= obstacle.getStartY() && snakeY[i] < obstacle.getStartY() + obstacle.getLength())
+					&& (snakeX[i] == obstacle.getStartX())) {
+						return true;
+				}
+				
+			}
+			
+		}
+	}	
+		return false;
 	}
 	
 

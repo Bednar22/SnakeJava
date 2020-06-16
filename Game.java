@@ -28,17 +28,20 @@ public class Game extends Canvas implements Runnable {
 	public static STATE state = STATE.MENU;
 	
 	private int updates = 0;
-	private int snakeSpeed = 2; 		//bigger number slower snake
+	public static int snakeSpeed = 3; 		//bigger number slower snake
 	
 	private InGameInterface ingameInterface;
 	private Snake snake;
 	private Food food;
 	private MainMenu mainMenu;
 	private AfterGameMenu afterGameMenu; 
+	private ObstacleHandler obstacleHandler;
+	private ScoreboardManager scoreboardManager;
+	private Options options;
 	public static int score;
+	
 	public void init() {
-		
-		
+			
 		requestFocus();
 		
 		this.addKeyListener(new KeyInput(this));
@@ -50,6 +53,9 @@ public class Game extends Canvas implements Runnable {
 		food = new Food();
 		mainMenu = new MainMenu();
 		afterGameMenu = new AfterGameMenu();
+		obstacleHandler = new ObstacleHandler();
+		scoreboardManager = new ScoreboardManager();
+		options = new Options();
 	}
 	
 	
@@ -118,14 +124,16 @@ public class Game extends Canvas implements Runnable {
 		if(state==STATE.GAMEPLAY) {
 			
 			if(updates%snakeSpeed==0) {
-			snake.tick();
+				snake.tick();
 			}
+			obstacleHandler.tick();
 			this.isAte();
 			food.tick();
 			ingameInterface.tick();
-			afterGameMenu.tick();
+			scoreboardManager.tick();
 		}
 		if(state==STATE.GAMEOVER) {
+			this.manageScore();
 			snake.setRandomStart();
 			food.generateRandomFood();
 			ingameInterface.resetScore();
@@ -149,17 +157,35 @@ public class Game extends Canvas implements Runnable {
 		
 		if(state == STATE.GAMEPLAY) {
 			ingameInterface.render(g);
+			obstacleHandler.render(g);
 			snake.render(g);
 			food.render(g);
+			
 		} else if(state==STATE.MENU) {
 			mainMenu.render(g);
 		} else if(state== STATE.GAMEOVER) {
 			afterGameMenu.render(g);
+		} else if(state == STATE.SCOREBOARD) {
+			scoreboardManager.render(g);
+		} else if(state == STATE.OPTIONS) {
+			options.render(g);
 		}
 		//////////////////////////////////////////////////////////////////////
 		g.dispose();
 		bs.show();
 		
+	}
+	
+	public void setSpeedHard() {
+		snakeSpeed = 2;
+	}
+	
+	public void setSpeedEasy() {
+		snakeSpeed = 4;
+	}
+	
+	public void setSpeedMedium() {
+		snakeSpeed = 3;
 	}
 	
 	public void isAte() {
@@ -168,6 +194,12 @@ public class Game extends Canvas implements Runnable {
 			food.generateRandomFood();
 			snake.increaseLength();
 		}
+	}
+	
+	public void manageScore() {
+		//scoreboardManager.getHigh2();
+		scoreboardManager.inputHighscore();
+		scoreboardManager.saveScores2();
 	}
 	
 	public void keyPressed(KeyEvent e) {

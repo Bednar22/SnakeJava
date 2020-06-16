@@ -1,9 +1,12 @@
 package snakev2package;
 
-import java.awt.Graphics;
-
 public class Obstacle {
 
+	private int startX;
+	private int startY;
+	private int obstLength;
+	private int orientation; // 0 - poziom, 1 - pion
+	
 	public Obstacle() {
 		
 	}
@@ -12,7 +15,39 @@ public class Obstacle {
 		
 	}
 	
-	public void render(Graphics g) {
-		
+	
+	//setters
+	public void setOrientation(int newOrientation) {
+		orientation = newOrientation;
 	}
+	
+	public void setStartX(int newStartX) {
+		startX = newStartX;
+	}
+	
+	public void setStartY(int newStartY) {
+		startY = newStartY;
+	}
+	
+	public void setLength(int newLength) {
+		obstLength = newLength;
+	}
+	
+	//getters
+	public int getOrientation() {
+		return orientation;
+	}
+	
+	public int getStartX() {
+		return startX;
+	}
+	
+	public int getStartY() {
+		return startY;
+	}
+
+	public int getLength() {
+		return obstLength;
+	}
+	
 }

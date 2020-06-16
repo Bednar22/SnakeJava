@@ -14,7 +14,7 @@ public class Snake {
 	public static int snakeSize = 10;
 	private int snakeLength = 3;
 	
-	
+	private boolean allFalse = true;
 	private boolean left=false;
 	private boolean right=false;
 	private boolean up=false;
@@ -49,10 +49,10 @@ public class Snake {
 				}
 				
 				// MOVING LEFT
-				if(left) {
-					for(int i = snakeLength-1; i>=0; i-- ) {
-						snakeY[i+1] = snakeY[i];
-					}
+		if(left) {
+			for(int i = snakeLength-1; i>=0; i-- ) {
+				snakeY[i+1] = snakeY[i];
+				}
 					
 					for(int i = snakeLength; i>=0; i-- ) {
 						if(i==0) {
@@ -104,10 +104,17 @@ public class Snake {
 	
 	public void render(Graphics g) {
 		for(int i = 0; i < snakeLength; i++ ) {
+			if(i == 0) {
+				g.setColor(Color.blue);
+				g.fillRect(snakeX[i], snakeY[i] , snakeSize, snakeSize);
+				g.setColor(Color.red);
+				g.drawRect(snakeX[i], snakeY[i] , snakeSize, snakeSize);
+			} else {
 			g.setColor(Color.green);
 			g.fillRect(snakeX[i], snakeY[i] , snakeSize, snakeSize);
 			g.setColor(Color.red);
 			g.drawRect(snakeX[i], snakeY[i] , snakeSize, snakeSize);
+			}
 		}
 	}
 	
@@ -157,6 +164,11 @@ public class Snake {
 			badStart = spawnColision();
 			
 		}
+		allFalse=true;
+		left=false;
+		right=false;
+		up=false;
+		down=false;
 		
 	}
 	
@@ -204,6 +216,7 @@ public class Snake {
 	
 	public void moveRight2() {
 		right = true;
+		allFalse = false;
 		if(left == false) {
 			right = true;
 		} else {
@@ -216,9 +229,13 @@ public class Snake {
 	
 	public void moveLeft2() {
 		left = true;
-		if(right == false) {
+		if((right == false) && (allFalse == false)) {
 			left = true;
-		} else {
+		} else if((allFalse == true)) {
+			left = false;
+			right = false;
+		}
+		else {
 			left = false;
 			right = true;
 		}
@@ -228,6 +245,7 @@ public class Snake {
 
 	public void moveUp2() {
 		up = true;
+		allFalse = false;
 		if(down == false) {
 			up = true;
 		} else {
@@ -240,6 +258,7 @@ public class Snake {
 	
 	public void moveDown2() {
 		down = true;
+		allFalse = false;
 		if(up == false) {
 			down = true;
 		} else {

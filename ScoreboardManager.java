@@ -16,12 +16,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 public class ScoreboardManager {
-
-	private String line1 = " ";
-	private String line2 = " ";
-	private String line3 = " ";
-		
-	public static String[] lines = {" ", " ", " "};
+	
+	public static String[] lines = {" Anonymous:0", " Anonymous:0", " Anonymous:0"};
 	private int[] scores = {0,0,0};
 	
 	private int i = 1; //index
@@ -49,13 +45,13 @@ public class ScoreboardManager {
 		
 		g.setColor(Color.white);
 		g.setFont(font.deriveFont(24f));
-		g.drawString(lines[0], Game.WIDTH / 2 - 75, 150 );
+		g.drawString(lines[0], Game.WIDTH / 2 - 125, 150 );
 		
 		g.setColor(Color.white);
-		g.drawString(lines[1], Game.WIDTH / 2 - 75, 200 );
+		g.drawString(lines[1], Game.WIDTH / 2 - 125, 200 );
 		
 		g.setColor(Color.white);
-		g.drawString(lines[2], Game.WIDTH / 2 - 75, 250 );
+		g.drawString(lines[2], Game.WIDTH / 2 - 125, 250 );
 		
 		g.setColor(backMenu);
 		g.setFont(font.deriveFont(28f));
@@ -67,6 +63,8 @@ public class ScoreboardManager {
 		
 		FileReader readFile = null;
 		BufferedReader reader = null;
+	
+		if(scoreFile.exists() == true) {
 		try {
 			readFile = new FileReader("highscores.txt");
 		} catch (FileNotFoundException e) {
@@ -89,6 +87,16 @@ public class ScoreboardManager {
 			}	
 		}
 		this.scoresIntoInts();
+		} else if(scoreFile.exists() == false) {
+			try {
+				scoreFile.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		saveScores2();	
+			
+		}
+		
 	}
 	
 	
@@ -132,22 +140,6 @@ public class ScoreboardManager {
 		
 	}
 	
-	public void saveScore() {
-		
-		      if (scoreFile.exists()==true) {
-		    	  try {
-		    		  FileWriter myWriter = new FileWriter("highscores.txt");
-		      
-		    		  for(String line : lines) {
-		    			  myWriter.write(line);
-		    		  }
-		    		  myWriter.close();
-		    	  } catch (IOException e) {
-		    		  e.printStackTrace();
-		    	  	}
-		      }
-	}
-	
 	public void scoresIntoInts() {
 		scores[0] = Integer.parseInt((lines[0].split(":")[1]));
 		scores[1] = Integer.parseInt((lines[1].split(":")[1]));
@@ -158,15 +150,28 @@ public void inputHighscore() {
 		
 		if(highscoreSaved == false) {
 			if(Game.score > scores[0]) {
-				String name = JOptionPane.showInputDialog("Best Score! Type your nick:");	
-				lines[0] = name + ":" + Game.score;  
+				String name = JOptionPane.showInputDialog("Best Score! Type your nick:");
+				if((name == null) || (name == "")) {
+					name = "Anonymous";
+				}
+				lines[2] = lines[1];
+				lines[1] = lines[0];
+				lines[0] = name + ":" + Game.score;
+				
 			
 			} else if((Game.score <= scores[0]) && (Game.score > scores[1])) {
 				String name = JOptionPane.showInputDialog("2nd best score! Type your nick:");
+				if((name == null) || (name == "")) {
+					name = "Anonymous";
+				}
+				lines[2] = lines[1];
 				lines[1] = name + ":" + Game.score;
 			
 			} else if((Game.score <= scores[1]) && (Game.score > scores[2])) {
 				String name = JOptionPane.showInputDialog("Top 3 Highscore! Type your nick:");
+				if((name == null) || (name == "")) {
+					name = "Anonymous";
+				}
 				lines[2] = name + ":" + Game.score;
 			}
 			highscoreSaved = true;

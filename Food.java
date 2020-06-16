@@ -20,6 +20,7 @@ public class Food {
 	public void render(Graphics g) {
 		g.setColor(Color.yellow);
 		g.drawRect(foodX, foodY , 10, 10);
+		g.fillRect(foodX, foodY, 10, 10);
 		}
 	
 	public void generateRandomFood() {
